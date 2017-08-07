@@ -1,8 +1,6 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
-import escapeRegExp from 'escape-string-regexp'
-import sortBy from 'sort-by'
 import {Route , Link} from 'react-router-dom'
 
 class BooksApp extends React.Component {
@@ -13,7 +11,6 @@ class BooksApp extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-    showSearchPage: true,
     query: '',
     searchPageBooks:[],
     mainPageBooks:[]
@@ -31,19 +28,28 @@ class BooksApp extends React.Component {
                   if (books.error) { // this will be true when result is not found
                     books = []
                   }
+                  /*1) Map over search results
+                  2) Next map over each book which is on your home page (this.state.mainPagebooks)
+                  3) Check if the book on home page was returned in search results (maybe use id ?)
+                  4) If book found : bookInSearchResults.shelf = bookInHomePage.shelf
+                  5) After both the map functions finish, set the search result books in your local state*/
+                  else {
+                    books.filter(bookInSearchResults => bookInSearchResults.id !== undefined && 
+                                              this.state.mainPageBooks.filter(bookInHomePage => bookInSearchResults.id === bookInHomePage.id)
+                                              .map(bookInHomePage => bookInSearchResults.shelf = bookInHomePage.shelf))
+                  }
                   this.setState({searchPageBooks: books})
-               
       })
     }
   }
 
-  updateBook = (book, shelf) => {
+  updateBook = (selectedBook, shelf) => {
     if (this.state.mainPageBooks) {
-       BooksAPI.update(book, shelf)
+       BooksAPI.update(selectedBook, shelf)
               .then(()=> {
-                  book.shelf = shelf
+                  selectedBook.shelf = shelf
                   this.setState(() => ({
-                  mainPageBooks: this.state.mainPageBooks.filter(b => b.id !== book.id).concat([ book ])
+                  mainPageBooks: this.state.mainPageBooks.filter(bookInHomePage => bookInHomePage.id !== selectedBook.id).concat([ selectedBook ])
                  }))
               })
        }
