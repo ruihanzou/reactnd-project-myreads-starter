@@ -17,6 +17,9 @@ This project has the following features so far:
 ⋅⋅* The search page contains a link to the main page. When the link is clicked, the main page is displayed and the URL in the browser’s address bar is /.
 
 ## Application Setup
+
 cd reactnd-project-myreads-starter && npm install
+
 npm start
+
 The server will listen to port 3000
